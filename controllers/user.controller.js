@@ -1,6 +1,14 @@
 const { StatusCodes } = require('http-status-codes');
 const { createUser, loginUser } = require('../services/users.service');
 
+const checkAuth = (req, res) => {
+    try {
+        return res.status(StatusCodes.OK).json({ message: 'Authenticated' });
+    } catch (err) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authenticated' });
+    }
+}
+
 const register = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -23,6 +31,7 @@ const login = async (req, res, next) => {
 }
 
 module.exports = {
+    checkAuth,
     register,
     login
 }
