@@ -8,8 +8,10 @@ dotenv.config();
 connectDB();
 
 const userRouter = require('./routes/users.router');
+const tripRouter = require('./routes/trips.router');
 
 app.use('/users', userRouter);
+app.use('/trips', tripRouter);
 
 app.listen(process.env.PORT, () => console.log(`Server listen on port ${process.env.PORT}`));
 
