@@ -20,7 +20,7 @@ const findUser = async (email) => {
     }
 }
 
-const createUser = async (name, email, password) => {
+const createUser = async (email, password) => {
     try {
         const foundUser = await findUser(email);
         if (foundUser) {
@@ -32,7 +32,6 @@ const createUser = async (name, email, password) => {
 
         const { salt, hashPassword } = passwordEncryption(password);
         const user = new User({
-            name: name,
             email: email,
             password: hashPassword,
             salt: salt

@@ -3,8 +3,8 @@ const { createUser, loginUser } = require('../services/users.service');
 
 const register = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
-        await createUser(name, email, password);
+        const { email, password } = req.body;
+        await createUser(email, password);
         return res.status(StatusCodes.CREATED).end();
     } catch (err) {
         next(err);
