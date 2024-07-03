@@ -50,7 +50,7 @@ const createToken = (email) => {
     const token = jwt.sign({
         email: email
     }, process.env.JWT_PRIVATE_KEY, {
-        expiresIn: '1d',
+        expiresIn: '7d',
         issuer: 'minjin'
     })
 
