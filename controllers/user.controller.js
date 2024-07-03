@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { createUser, loginUser } = require('../services/users.service');
+const { createUser, loginUser, findUser } = require('../services/users.service');
 
 const checkAuth = (req, res) => {
     try {
@@ -13,7 +13,21 @@ const register = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         await createUser(email, password);
+
         return res.status(StatusCodes.CREATED).end();
+    } catch (err) {
+        next(err);
+    }
+}
+
+const checkEmail = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const isExistedEmail = await findUser(email);
+        const status = isExistedEmail ? StatusCodes.BAD_REQUEST : StatusCodes.OK;
+        const msg = isExistedEmail ? '이미 사용된 이메일입니다.' : '사용 가능한 이메일입니다.';
+
+        return res.status(status).json({ message: msg });
     } catch (err) {
         next(err);
     }
@@ -24,6 +38,7 @@ const login = async (req, res, next) => {
         const { email, password } = req.body;
         const token = await loginUser(email, password);
         res.cookie('token', token, { httpOnly: true });
+
         return res.status(StatusCodes.OK).json({ email });
     } catch (err) {
         next(err);
@@ -33,5 +48,6 @@ const login = async (req, res, next) => {
 module.exports = {
     checkAuth,
     register,
+    checkEmail,
     login
 }

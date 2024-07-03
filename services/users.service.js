@@ -46,8 +46,9 @@ const createUser = async (email, password) => {
     }
 }
 
-const createToken = (email) => {
+const createToken = (id, email) => {
     const token = jwt.sign({
+        id: id,
         email: email
     }, process.env.JWT_PRIVATE_KEY, {
         expiresIn: '7d',
@@ -63,7 +64,7 @@ const loginUser = async (email, password) => {
         if (foundUser) {
             const hashPassword = getHashPassword(password, foundUser.salt);
             if (foundUser.password === hashPassword) {
-                const token = createToken(email);
+                const token = createToken(foundUser.id, email);
 
                 return token;
             }
@@ -83,6 +84,7 @@ const loginUser = async (email, password) => {
 }
 
 module.exports = {
+    findUser,
     createUser,
     loginUser
 };
