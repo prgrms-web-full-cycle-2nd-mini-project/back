@@ -46,7 +46,7 @@ const selectTrips = async ({ plan, page, userId }) => {
     } catch (err) {
         throw new CustomError(
             err.message || '여행 목록을 조회할 수 없습니다.',
-            StatusCodes.INTERNAL_SERVER_ERROR,
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
             err
         )
     }
@@ -86,7 +86,7 @@ const insertTrip = async ({ title, date, location, xCoordinate, yCoordinate, use
     } catch (err) {
         throw new CustomError(
             err.message || '여행 생성 실패',
-            StatusCodes.INTERNAL_SERVER_ERROR,
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
             err
         )
     }
@@ -130,10 +130,56 @@ const selectTripDetail = async (tripId) => {
     } catch (err) {
         throw new CustomError(
             err.message || '여행 상세 조회 실패',
-            StatusCodes.INTERNAL_SERVER_ERROR,
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
             err
         )
     }
 }
 
-module.exports = { selectTrips, insertTrip, selectTripDetail };
+const updateTrip = async ({ tripId, title, date, location, xCoordinate, yCoordinate }) => {
+    try {
+        const trip = await Trip.findByIdAndUpdate(
+            tripId,
+            {
+                title: title,
+                date: date,
+                location: location,
+                xCoordinate: xCoordinate,
+                yCoordinate: yCoordinate
+            }
+        );
+
+        if (!trip) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.NOT_FOUND
+            );
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '여행 수정 실패',
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+            err
+        )
+    }
+}
+
+const deleteTrip = async (tripId) => {
+    try {
+        const trip = await Trip.findByIdAndDelete(tripId);
+        if (!trip) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.NOT_FOUND
+            )
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '여행 삭제 실패',
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+            err
+        )
+    }
+}
+
+module.exports = { selectTrips, insertTrip, selectTripDetail, updateTrip, deleteTrip };

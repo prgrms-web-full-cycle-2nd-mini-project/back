@@ -1,5 +1,5 @@
 const express = require('express');
-const { getTrips, createTrip, getTripDetail } = require('../controllers/trip.controller');
+const { getTrips, createTrip, getTripDetail, changeTrip, removeTrip } = require('../controllers/trip.controller');
 const { validateToken } = require('../authorization');
 const { tripIdValidate } = require('../validator/trip.validator');
 const { validate } = require('../validator/validate');
@@ -23,16 +23,16 @@ router.get(
     getTripDetail
 )
 
-// router.put(
-//     '/:tripId',
-//     [validateToken],
-//     updateTrip
-// );
+router.put(
+    '/:tripId',
+    [validateToken, tripIdValidate, validate],
+    changeTrip
+);
 
-// router.delete(
-//     '/:tripId',
-//     [validateToken],
-//     deleteTrip
-// );
+router.delete(
+    '/:tripId',
+    [validateToken, tripIdValidate, validate],
+    removeTrip
+);
 
 module.exports = router;

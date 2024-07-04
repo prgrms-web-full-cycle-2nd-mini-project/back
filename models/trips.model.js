@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schedule = require('./schedules.model');
 const { Schema } = mongoose;
 
 const tripSchema = new Schema({
@@ -34,6 +35,14 @@ const tripSchema = new Schema({
         }
     ]
 });
+
+tripSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Schedule.deleteMany({
+            _id: { $in: doc.schedules }
+        })
+    }
+})
 
 const Trip = mongoose.model('Trip', tripSchema);
 module.exports = Trip;
