@@ -94,13 +94,6 @@ const insertTrip = async ({ title, date, location, xCoordinate, yCoordinate, use
 
 const selectTripDetail = async (tripId) => {
     try {
-        if (tripId.length !== 24) {
-            throw new CustomError(
-                '존재하지 않는 여행입니다.',
-                StatusCodes.BAD_REQUEST
-            );
-        }
-
         const trip = await Trip.findById(tripId)
             .populate({ path: 'schedules', options: { sort: { 'startTime': 1 } } });
 
