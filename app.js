@@ -2,10 +2,20 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 const connectDB = require('./db');
+const cors = require('cors');
 
 app.use(express.json());
 dotenv.config();
 connectDB();
+
+const corsOptions = {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
+    optionsSuccessStatus: 204,
+    credentials: true,
+};
+app.use(cors(corsOptions));
 
 const userRouter = require('./routes/users.router');
 const tripRouter = require('./routes/trips.router');
