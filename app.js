@@ -13,7 +13,7 @@ const scheduleRouter = require('./routes/schedules.router');
 
 app.use('/users', userRouter);
 app.use('/trips', tripRouter);
-app.use('/trips/:tripId/schedules', scheduleRouter);
+app.use('/trips', scheduleRouter);
 
 app.listen(process.env.PORT, () => console.log(`Server listen on port ${process.env.PORT}`));
 

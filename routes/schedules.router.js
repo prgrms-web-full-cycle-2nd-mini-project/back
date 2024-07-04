@@ -4,7 +4,7 @@ const { createSchedule } = require('../controllers/schedule.controller');
 const router = express.Router();
 
 router.post(
-    '/',
+    '/:tripId/schedules',
     [validateToken],
     createSchedule
 );

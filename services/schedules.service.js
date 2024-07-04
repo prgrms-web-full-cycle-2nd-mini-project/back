@@ -7,36 +7,38 @@ const { default: mongoose } = require("mongoose");
 
 const insertSchedule = async ({ tripId, todo, location, xCoordinate, yCoordinate, startTime, endTime }) => {
     try {
-        const db = mongoose.connection;
-        const session = await db.startSession();
-        session.startTransaction();
-
         const newSchedule = new Schedule({
             todo, location, xCoordinate, yCoordinate,
             startTime: getLocalTime(startTime),
             endTime: getLocalTime(endTime),
             isChecked: false
         });
-        (await newSchedule.save()).$session(session);
+        await newSchedule.save();
 
-        await Trip.updateOne(
-            { id: tripId },
-            { $push: { schedules: newSchedule.id } }
-        ).session(session);
+        const trip = await Trip.findById(tripId);
+        trip.schedules.push(newSchedule.id);
+        await trip.save();
 
         const schedules = await Trip.findOne(
-            { id: tripId }, { schedules: 1 }
+            { _id: tripId }, { schedules: 1 }
         ).populate({
             path: 'schedules',
             select: 'id todo location xCoordinate yCoordinate startTime endTime isChecked',
             options: { sort: { 'startTime': 1 } }
-        }).session(session);
+        });
 
-        await session.commitTransaction();
-        session.endSession();
-
-        return schedules.schedules;
-
+        return schedules.schedules.map(s => {
+            return {
+                id: s._id,
+                todo: s.todo,
+                location: s.location,
+                xCoordinate: s.xCoordinate,
+                yCoordinate: s.yCoordinate,
+                startTime: s.startTime,
+                endTime: s.endTime,
+                isChecked: s.isChecked
+            }
+        });
     } catch (err) {
         throw new CustomError(
             err.message || '여행 생성 실패',
