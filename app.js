@@ -9,9 +9,11 @@ connectDB();
 
 const userRouter = require('./routes/users.router');
 const tripRouter = require('./routes/trips.router');
+const scheduleRouter = require('./routes/schedules.router');
 
 app.use('/users', userRouter);
 app.use('/trips', tripRouter);
+app.use('/trips/:tripId/schedules', scheduleRouter);
 
 app.listen(process.env.PORT, () => console.log(`Server listen on port ${process.env.PORT}`));
 

@@ -17,16 +17,19 @@ const selectTrips = async ({ plan, page, userId }) => {
         const trips = await Trip.find(
             { $and: [{ owner: userId }, { date: dateCondition }] },
             { owner: 0, __v: 0 }
-        ).sort({ date: 1 });
+        ).populate({ path: 'schedules', select: 'isChecked' }).sort({ date: 1 });
 
         response.trips = trips.slice(8 * (page - 1), 8 * page).map(trip => {
+            let completedCount = 0;
+            trip.schedules.forEach(s => s.isChecked ? completedCount++ : '');
+
             return {
                 id: trip._id,
                 title: trip.title,
                 date: trip.date,
                 location: trip.location,
-                xCoordinate: trip.xCoordinate,
-                yCoordinate: trip.yCoordinate
+                completedCount: completedCount,
+                totalCount: trip.schedules.length
             }
         });
         response.pagination.totalPage = Math.ceil(trips.length / 8);
@@ -56,23 +59,27 @@ const insertTrip = async ({ title, date, location, xCoordinate, yCoordinate, use
             location,
             xCoordinate,
             yCoordinate,
-            owner: userId
+            owner: userId,
+            schedules: []
         });
         await newTrip.save();
 
         const trips = await Trip.find(
             { $and: [{ owner: userId }, { date: { $gte: new Date() } }] },
             { owner: 0, __v: 0 }
-        ).sort({ date: 1 });
+        ).populate({ path: 'schedules', select: 'isChecked' }).sort({ date: 1 });
 
         return trips.map(trip => {
+            let completedCount = 0;
+            trip.schedules.forEach(s => s.isChecked ? completedCount++ : '');
+
             return {
                 id: trip._id,
                 title: trip.title,
                 date: trip.date,
                 location: trip.location,
-                xCoordinate: trip.xCoordinate,
-                yCoordinate: trip.yCoordinate
+                completedCount: completedCount,
+                totalCount: trip.schedules.length
             }
         });
     } catch (err) {

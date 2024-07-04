@@ -26,7 +26,13 @@ const tripSchema = new Schema({
         type: mongoose.Types.ObjectId,
         required: true,
         ref: 'User'
-    }
+    },
+    schedules: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Schedule'
+        }
+    ]
 });
 
 const Trip = mongoose.model('Trip', tripSchema);
