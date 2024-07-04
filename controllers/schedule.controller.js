@@ -1,8 +1,10 @@
 const { StatusCodes } = require('http-status-codes');
 const { insertSchedule, updateSchedule, deleteSchedule } = require('../services/schedules.service');
+const { accessAuthorization } = require('../authorization');
 
 const createSchedule = async (req, res, next) => {
     try {
+        await accessAuthorization(req);
         const { tripId } = req.params;
         const { todo, location, xCoordinate, yCoordinate, startTime, endTime } = req.body;
         const schedules = await insertSchedule({
@@ -23,6 +25,7 @@ const createSchedule = async (req, res, next) => {
 
 const changeSchedule = async (req, res, next) => {
     try {
+        await accessAuthorization(req);
         const { tripId, scheduleId } = req.params;
         const { todo, location, xCoordinate, yCoordinate, startTime, endTime, isChecked } = req.body;
         const schedules = await updateSchedule({
@@ -39,6 +42,7 @@ const changeSchedule = async (req, res, next) => {
 
 const removeSchedule = async (req, res, next) => {
     try {
+        await accessAuthorization(req);
         const { tripId, scheduleId } = req.params;
         await deleteSchedule(tripId, scheduleId);
 

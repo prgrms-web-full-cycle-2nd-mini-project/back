@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const { StatusCodes } = require('http-status-codes');
+const Trip = require('./models/trips.model');
+const { CustomError } = require('./utils/CustomError');
 
 dotenv.config();
 
@@ -50,4 +52,25 @@ function getLoginedId(req) {
     return false;
 }
 
-module.exports = { ensureAuthorization, validateToken, getLoginedId };
+async function accessAuthorization(req) {
+    try {
+        const { tripId } = req.params;
+        const authorization = ensureAuthorization(req);
+
+        const trip = await Trip.findById(tripId);
+        if (authorization.id !== trip.owner.toString()) {
+            throw new CustomError(
+                '접근 권한이 없습니다.',
+                StatusCodes.UNAUTHORIZED,
+            );
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '인증 실패',
+            err.statusCode || StatusCodes.UNAUTHORIZED,
+            err
+        )
+    }
+}
+
+module.exports = { ensureAuthorization, validateToken, getLoginedId, accessAuthorization };
