@@ -1,5 +1,5 @@
 const express = require('express');
-const { getTrips, createTrip } = require('../controllers/trip.controller');
+const { getTrips, createTrip, getTripDetail } = require('../controllers/trip.controller');
 const { validateToken } = require('../authorization');
 const router = express.Router();
 
@@ -14,6 +14,12 @@ router.post(
     [validateToken],
     createTrip
 );
+
+router.get(
+    '/:tripId',
+    [validateToken],
+    getTripDetail
+)
 
 // router.put(
 //     '/:tripId',

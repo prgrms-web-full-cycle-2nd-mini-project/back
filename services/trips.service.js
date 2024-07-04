@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require('../utils/CustomError');
 const Trip = require("../models/trips.model");
+const { findOne } = require("../models/users.model");
 
 const selectTrips = async ({ plan, page, userId }) => {
     try {
@@ -91,4 +92,55 @@ const insertTrip = async ({ title, date, location, xCoordinate, yCoordinate, use
     }
 }
 
-module.exports = { selectTrips, insertTrip };
+const selectTripDetail = async (tripId) => {
+    try {
+        if (tripId.length !== 24) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        const trip = await Trip.findById(tripId)
+            .populate({ path: 'schedules', options: { sort: { 'startTime': 1 } } });
+
+        if (!trip) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        const formattedSchedule = trip.schedules.map(s => {
+            return {
+                id: s._id,
+                todo: s.todo,
+                location: s.location,
+                xCoordinate: s.xCoordinate,
+                yCoordinate: s.yCoordinate,
+                startTime: s.startTime,
+                endTime: s.endTime,
+                isChecked: s.isChecked
+            }
+        });
+
+        const formattedTrip = {
+            id: trip.id,
+            date: trip.date,
+            location: trip.location,
+            xCoordinate: trip.xCoordinate,
+            yCoordinate: trip.yCoordinate,
+            schedules: formattedSchedule
+        }
+
+        return formattedTrip;
+    } catch (err) {
+        throw new CustomError(
+            err.message || '여행 상세 조회 실패',
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            err
+        )
+    }
+}
+
+module.exports = { selectTrips, insertTrip, selectTripDetail };

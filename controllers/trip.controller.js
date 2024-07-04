@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { getLoginedId } = require('../authorization');
-const { selectTrips, insertTrip } = require('../services/trips.service');
+const { selectTrips, insertTrip, selectTripDetail } = require('../services/trips.service');
 
 const getTrips = async (req, res, next) => {
     try {
@@ -20,10 +20,22 @@ const createTrip = async (req, res, next) => {
         const { title, date, location, xCoordinate, yCoordinate } = req.body;
         const userId = getLoginedId(req);
         const trips = await insertTrip({ title, date, location, xCoordinate, yCoordinate, userId });
+
         return res.status(StatusCodes.CREATED).json(trips);
     } catch (err) {
         next(err);
     }
 }
 
-module.exports = { getTrips, createTrip };
+const getTripDetail = async (req, res, next) => {
+    try {
+        const { tripId } = req.params;
+        const tripDetail = await selectTripDetail(tripId);
+
+        return res.status(StatusCodes.OK).json(tripDetail);
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { getTrips, createTrip, getTripDetail };
