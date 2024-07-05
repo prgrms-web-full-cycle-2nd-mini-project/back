@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const { StatusCodes } = require("http-status-codes");
 const dotenv = require('dotenv');
 const connectDB = require('./db');
 const cors = require('cors');
