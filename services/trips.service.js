@@ -133,6 +133,7 @@ const selectTripDetail = async (tripId) => {
 
         const formattedTrip = {
             id: trip.id,
+            title: trip.title,
             date: trip.date,
             location: trip.location,
             xCoordinate: trip.xCoordinate,
