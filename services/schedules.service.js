@@ -51,7 +51,6 @@ const checkScheduleInTrip = async (tripId, scheduleId) => {
         const isExist = await Trip.findOne({
             $and: [
                 { _id: tripId },
-                // { schedules: { $elemMatch: { id: scheduleId } } }
                 { schedules: scheduleId }
             ]
         });
