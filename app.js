@@ -27,6 +27,13 @@ app.use('/trips', scheduleRouter);
 
 app.listen(process.env.PORT, () => console.log(`Server listen on port ${process.env.PORT}`));
 
+app.use((req, res, next) => {
+    const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+    error.status = StatusCodes.NOT_FOUND;
+
+    next(error);
+})
+
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const errMsg = err.message || '서버 내부 오류 발생';
