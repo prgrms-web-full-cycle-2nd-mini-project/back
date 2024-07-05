@@ -58,6 +58,13 @@ async function accessAuthorization(req) {
         const authorization = ensureAuthorization(req);
 
         const trip = await Trip.findById(tripId);
+        if (!trip) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.NOT_FOUND,
+            );
+        }
+
         if (authorization.id !== trip.owner.toString()) {
             throw new CustomError(
                 '접근 권한이 없습니다.',
