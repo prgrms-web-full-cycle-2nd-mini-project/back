@@ -46,17 +46,37 @@ const insertSchedule = async ({ tripId, todo, location, xCoordinate, yCoordinate
     }
 }
 
+const checkScheduleInTrip = async (tripId, scheduleId) => {
+    try {
+        const isExist = await Trip.findOne({
+            $and: [
+                { _id: tripId },
+                // { schedules: { $elemMatch: { id: scheduleId } } }
+                { schedules: scheduleId }
+            ]
+        });
+
+        if (!isExist) {
+            throw new CustomError(
+                '존재하지 않는 일정입니다.',
+                StatusCodes.NOT_FOUND
+            );
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '여행 일정 체크 실패',
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 const updateSchedule = async ({
     tripId, scheduleId, todo,
     location, xCoordinate, yCoordinate,
     startTime, endTime, isChecked
 }) => {
     try {
-        const isExist = await Trip.find({
-            schedules: {
-                $elemMatch: { id: tripId }
-            }
-        });
+        await checkScheduleInTrip(tripId, scheduleId);
 
         const schedule = await Schedule.findByIdAndUpdate(
             scheduleId,
@@ -71,7 +91,7 @@ const updateSchedule = async ({
             }
         );
 
-        if (!isExist || !schedule) {
+        if (!schedule) {
             throw new CustomError(
                 '존재하지 않는 일정입니다.',
                 StatusCodes.NOT_FOUND
@@ -100,7 +120,7 @@ const updateSchedule = async ({
         });
     } catch (err) {
         throw new CustomError(
-            err.message || '여행 수정 실패',
+            err.message || '일정 수정 실패',
             err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
             err
         )
@@ -109,6 +129,8 @@ const updateSchedule = async ({
 
 const deleteSchedule = async (tripId, scheduleId) => {
     try {
+        await checkScheduleInTrip(tripId, scheduleId);
+
         const trip = await Trip.findByIdAndUpdate(tripId, { $pull: { schedules: scheduleId } });
         const schedule = await Schedule.findByIdAndDelete(scheduleId);
         if (!schedule || !trip) {
@@ -121,7 +143,7 @@ const deleteSchedule = async (tripId, scheduleId) => {
 
     } catch (err) {
         throw new CustomError(
-            err.message || '여행 삭제 실패',
+            err.message || '일정 삭제 실패',
             err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
             err
         )
