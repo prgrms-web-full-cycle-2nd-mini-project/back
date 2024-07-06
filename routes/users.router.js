@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, checkAuth, checkEmail } = require('../controllers/user.controller');
+const { register, login, checkAuth, checkEmail, logout } = require('../controllers/user.controller');
 const { emailValidate, passwordValidate } = require('../validator/user.validator');
 const { validate } = require('../validator/validate');
 const { validateToken } = require('../authorization');
@@ -28,5 +28,11 @@ router.post(
     [emailValidate, passwordValidate, validate],
     login
 );
+
+router.post(
+    '/logout',
+    [validateToken],
+    logout
+)
 
 module.exports = router;

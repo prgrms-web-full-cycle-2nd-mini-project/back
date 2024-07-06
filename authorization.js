@@ -1,4 +1,3 @@
-const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { StatusCodes } = require("http-status-codes");

@@ -45,9 +45,19 @@ const login = async (req, res, next) => {
     }
 }
 
+const logout = (req, res, next) => {
+    try {
+        res.clearCookie('token', { httpOnly: true });
+        return res.status(StatusCodes.RESET_CONTENT).json({ message: '로그아웃 되었습니다.' });
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     checkAuth,
     register,
     checkEmail,
-    login
+    login,
+    logout
 }
