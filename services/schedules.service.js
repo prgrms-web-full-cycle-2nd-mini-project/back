@@ -7,8 +7,8 @@ const insertSchedule = async ({ tripId, todo, location, xCoordinate, yCoordinate
     try {
         const newSchedule = new Schedule({
             todo, location, xCoordinate, yCoordinate,
-            startTime: startTime,
-            endTime: endTime,
+            startTime: new Date(startTime),
+            endTime: new Date(endTime),
             isChecked: false
         });
         await newSchedule.save();
@@ -84,8 +84,8 @@ const updateSchedule = async ({
                 location: location,
                 xCoordinate: xCoordinate,
                 yCoordinate: yCoordinate,
-                startTime: startTime,
-                endTime: endTime,
+                startTime: new Date(startTime),
+                endTime: new Date(endTime),
                 isChecked: isChecked
             }
         );
