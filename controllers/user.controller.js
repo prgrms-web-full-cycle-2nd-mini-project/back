@@ -37,7 +37,8 @@ const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const token = await loginUser(email, password);
-        res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+        // res.cookie('token', token, { sameSite: 'none', secure: true, httpOnly: true });
+        res.cookie('token', token, { httpOnly: true });
 
         return res.status(StatusCodes.OK).json({ email });
     } catch (err) {
@@ -47,7 +48,8 @@ const login = async (req, res, next) => {
 
 const logout = (req, res, next) => {
     try {
-        res.clearCookie('token', { sameSite: 'none', secure: true, httpOnly: true });
+        // res.clearCookie('token', { sameSite: 'none', secure: true, httpOnly: true });
+        res.clearCookie('token', { httpOnly: true });
         return res.status(StatusCodes.RESET_CONTENT).json({ message: '로그아웃 되었습니다.' });
     } catch (err) {
         next(err);
