@@ -85,8 +85,8 @@ const updateSchedule = async ({
                 location: location,
                 xCoordinate: xCoordinate,
                 yCoordinate: yCoordinate,
-                startTime: new Date(startTime),
-                endTime: new Date(endTime),
+                startTime: convertUTC(startTime),
+                endTime: convertUTC(endTime),
                 isChecked: isChecked
             }
         );
