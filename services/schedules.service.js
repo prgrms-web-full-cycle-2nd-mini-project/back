@@ -2,13 +2,14 @@ const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require('../utils/CustomError');
 const Schedule = require("../models/schedules.model");
 const Trip = require("../models/trips.model");
+const { convertUTC } = require("../utils/format");
 
 const insertSchedule = async ({ tripId, todo, location, xCoordinate, yCoordinate, startTime, endTime }) => {
     try {
         const newSchedule = new Schedule({
             todo, location, xCoordinate, yCoordinate,
-            startTime: new Date(startTime),
-            endTime: new Date(endTime),
+            startTime: convertUTC(startTime),
+            endTime: convertUTC(endTime),
             isChecked: false
         });
         await newSchedule.save();
