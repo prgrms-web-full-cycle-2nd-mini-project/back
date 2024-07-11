@@ -29,4 +29,4 @@ const createScheduleValidator = [
 
 const updateScheduleValidator = [...createScheduleValidator, isCheckedValidate];
 
-module.exports = { scheduleIdValidate, createScheduleValidator, updateScheduleValidator };
+module.exports = { scheduleIdValidate, isCheckedValidate, createScheduleValidator, updateScheduleValidator };

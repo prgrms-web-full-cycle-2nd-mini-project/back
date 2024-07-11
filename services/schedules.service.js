@@ -127,6 +127,30 @@ const updateSchedule = async ({
     }
 }
 
+const updateCheck = async (tripId, scheduleId, isChecked) => {
+    try {
+        await checkScheduleInTrip(tripId, scheduleId);
+
+        const schedule = await Schedule.findByIdAndUpdate(
+            scheduleId,
+            { isChecked: isChecked }
+        );
+
+        if (!schedule) {
+            throw new CustomError(
+                '존재하지 않는 일정입니다.',
+                StatusCodes.NOT_FOUND
+            );
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '일정 완료 여부 수정 실패',
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+            err
+        )
+    }
+}
+
 const deleteSchedule = async (tripId, scheduleId) => {
     try {
         await checkScheduleInTrip(tripId, scheduleId);
@@ -150,4 +174,4 @@ const deleteSchedule = async (tripId, scheduleId) => {
     }
 }
 
-module.exports = { insertSchedule, updateSchedule, deleteSchedule };
+module.exports = { insertSchedule, updateSchedule, updateCheck, deleteSchedule };

@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { insertSchedule, updateSchedule, deleteSchedule } = require('../services/schedules.service');
+const { insertSchedule, updateSchedule, deleteSchedule, updateCheck } = require('../services/schedules.service');
 const { accessAuthorization } = require('../authorization');
 
 const createSchedule = async (req, res, next) => {
@@ -40,6 +40,19 @@ const changeSchedule = async (req, res, next) => {
     }
 }
 
+const changeCheck = async (req, res, next) => {
+    try {
+        await accessAuthorization(req);
+        const { tripId, scheduleId } = req.params;
+        const { isChecked } = req.body;
+        await updateCheck(tripId, scheduleId, isChecked);
+
+        return res.status(StatusCodes.OK).end();
+    } catch (err) {
+        next(err);
+    }
+}
+
 const removeSchedule = async (req, res, next) => {
     try {
         await accessAuthorization(req);
@@ -52,4 +65,4 @@ const removeSchedule = async (req, res, next) => {
     }
 }
 
-module.exports = { createSchedule, changeSchedule, removeSchedule }
+module.exports = { createSchedule, changeSchedule, changeCheck, removeSchedule }
