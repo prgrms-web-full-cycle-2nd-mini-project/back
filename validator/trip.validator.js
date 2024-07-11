@@ -15,4 +15,4 @@ const tripDataValidate = [
     yCoordinateValidate
 ];
 
-module.exports = { tripIdValidate, dateValidate, tripDataValidate };
+module.exports = { tripIdValidate, titleValidate, dateValidate, tripDataValidate };

@@ -151,6 +151,24 @@ const selectTripDetail = async (tripId) => {
     }
 }
 
+const updateTripTitle = async (tripId, title) => {
+    try {
+        const trip = await Trip.findByIdAndUpdate(tripId, { title: title });
+        if (!trip) {
+            throw new CustomError(
+                '존재하지 않는 여행입니다.',
+                StatusCodes.NOT_FOUND
+            );
+        }
+    } catch (err) {
+        throw new CustomError(
+            err.message || '여행 제목 수정 실패',
+            err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+            err
+        )
+    }
+}
+
 const updateTrip = async ({ tripId, title, date, location, xCoordinate, yCoordinate }) => {
     try {
         const trip = await Trip.findByIdAndUpdate(
@@ -197,4 +215,4 @@ const deleteTrip = async (tripId) => {
     }
 }
 
-module.exports = { selectTrips, insertTrip, selectTripDetail, updateTrip, deleteTrip };
+module.exports = { selectTrips, insertTrip, selectTripDetail, updateTripTitle, updateTrip, deleteTrip };

@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { getLoginedId, accessAuthorization } = require('../authorization');
-const { selectTrips, insertTrip, selectTripDetail, updateTrip, deleteTrip } = require('../services/trips.service');
+const { selectTrips, insertTrip, selectTripDetail, updateTrip, deleteTrip, updateTripTitle } = require('../services/trips.service');
 
 const getTrips = async (req, res, next) => {
     try {
@@ -39,6 +39,19 @@ const getTripDetail = async (req, res, next) => {
     }
 }
 
+const changeTripTitle = async (req, res, next) => {
+    try {
+        await accessAuthorization(req);
+        const { tripId } = req.params;
+        const { title } = req.body;
+        await updateTripTitle(tripId, title);
+
+        return res.status(StatusCodes.OK).end();
+    } catch (err) {
+        next(err);
+    }
+}
+
 const changeTrip = async (req, res, next) => {
     try {
         await accessAuthorization(req);
@@ -64,4 +77,4 @@ const removeTrip = async (req, res, next) => {
     }
 }
 
-module.exports = { getTrips, createTrip, getTripDetail, changeTrip, removeTrip };
+module.exports = { getTrips, createTrip, getTripDetail, changeTripTitle, changeTrip, removeTrip };
