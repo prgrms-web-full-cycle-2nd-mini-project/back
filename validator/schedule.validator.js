@@ -6,17 +6,18 @@ const xCoordinateValidate = body('xCoordinate').notEmpty().isNumeric().withMessa
 const yCoordinateValidate = body('yCoordinate').notEmpty().isNumeric().withMessage('y좌표를 입력해주세요.');
 const isCheckedValidate = body('isChecked').notEmpty().isBoolean().withMessage('체크 여부를 입력해주세요.');
 
-const isValidDateTime = (value) => {
-    const date = new Date(value);
-    if (date == 'Invalid Date') {
+const isValidTime = (value) => {
+    const [hour, minute] = value.split(':');
+
+    if (isNaN(hour) || isNaN(minute)) {
         throw new Error('시간을 제대로 입력해주세요.');
     }
     return true;
 }
 
 
-const startTimeValidate = body('startTime').custom(isValidDateTime);
-const endTimeValidate = body('endTime').custom(isValidDateTime);
+const startTimeValidate = body('startTime').custom(isValidTime);
+const endTimeValidate = body('endTime').custom(isValidTime);
 
 
 const createScheduleValidator = [

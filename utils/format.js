@@ -1,9 +1,10 @@
-const convertUTC = (time) => {
-    const newTime = new Date(time + '.000Z');
-    newTime.setHours(newTime.getHours() - 9);
-    newTime.setFullYear(2024, 6, 20);
+const createTime = (time) => {
+    const newTime = new Date('2024-07-20T00:00:00.000Z');
+    const [hour, minute] = time.split(':');
+    newTime.setHours(Number(hour));
+    newTime.setMinutes(Number(minute));
 
     return newTime;
 }
 
-module.exports = { convertUTC }
+module.exports = { createTime }

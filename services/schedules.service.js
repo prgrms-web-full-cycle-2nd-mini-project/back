@@ -2,14 +2,14 @@ const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require('../utils/CustomError');
 const Schedule = require("../models/schedules.model");
 const Trip = require("../models/trips.model");
-const { convertUTC } = require("../utils/format");
+const { createTime } = require("../utils/format");
 
 const insertSchedule = async ({ tripId, todo, location, xCoordinate, yCoordinate, startTime, endTime }) => {
     try {
         const newSchedule = new Schedule({
             todo, location, xCoordinate, yCoordinate,
-            startTime: convertUTC(startTime),
-            endTime: convertUTC(endTime),
+            startTime: createTime(startTime),
+            endTime: createTime(endTime),
             isChecked: false
         });
         await newSchedule.save();
@@ -85,8 +85,8 @@ const updateSchedule = async ({
                 location: location,
                 xCoordinate: xCoordinate,
                 yCoordinate: yCoordinate,
-                startTime: convertUTC(startTime),
-                endTime: convertUTC(endTime),
+                startTime: createTime(startTime),
+                endTime: createTime(endTime),
                 isChecked: isChecked
             }
         );
