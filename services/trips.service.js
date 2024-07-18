@@ -15,10 +15,11 @@ const selectTrips = async ({ plan, page, userId }) => {
         const today = new Date();
 
         const dateCondition = plan === 'true' ? { $gte: today } : { $lt: today };
+        const sortCondition = plan === 'true' ? 1 : -1;
         const trips = await Trip.find(
             { $and: [{ owner: userId }, { date: dateCondition }] },
             { owner: 0, __v: 0 }
-        ).populate({ path: 'schedules', select: 'isChecked' }).sort({ date: 1 });
+        ).populate({ path: 'schedules', select: 'isChecked' }).sort({ date: sortCondition });
 
         response.trips = trips.slice(8 * (page - 1), 8 * page).map(trip => {
             let completedCount = 0;
@@ -35,12 +36,12 @@ const selectTrips = async ({ plan, page, userId }) => {
         });
         response.pagination.totalPage = Math.ceil(trips.length / 8);
 
-        if (!response.trips.length) {
-            throw new CustomError(
-                '조회할 여행 목록이 없습니다.',
-                StatusCodes.NOT_FOUND
-            )
-        };
+        // if (!response.trips.length) {
+        //     throw new CustomError(
+        //         '조회할 여행 목록이 없습니다.',
+        //         StatusCodes.NOT_FOUND
+        //     )
+        // };
 
         return response;
     } catch (err) {
