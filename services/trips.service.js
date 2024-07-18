@@ -56,13 +56,14 @@ const selectTrips = async ({ plan, page, userId }) => {
 const insertTrip = async ({ title, date, location, xCoordinate, yCoordinate, userId }) => {
     try {
         const today = new Date();
+        const tripDate = new Date(date);
 
         const tripCount = await Trip.find(
             { $and: [{ owner: userId }, { date: { $gte: today } }] },
             { owner: 0, __v: 0 }
         ).populate({ path: 'schedules', select: 'isChecked' }).sort({ date: 1 });
 
-        if (tripCount.length >= 5) {
+        if (tripDate >= today && tripCount.length >= 5) {
             throw new CustomError(
                 '계획 중인 여행은 5개까지만 추가할 수 있습니다.',
                 StatusCodes.BAD_REQUEST
